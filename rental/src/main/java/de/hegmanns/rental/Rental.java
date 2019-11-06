@@ -2,19 +2,19 @@ package de.hegmanns.rental;
 
 public class Rental {
     private final Movie movie;
-    private final int days;
+    private final int daysRental;
 
-    public Rental(Movie movie, int days) {
-        if (days <= 0) throw new IllegalArgumentException("Negative days rented");
+    public Rental(Movie movie, int daysRental) {
+        if (daysRental <= 0) throw new IllegalArgumentException("Negative days rented");
         this.movie = movie;
-        this.days = days;
+        this.daysRental = daysRental;
     }
 
     public Movie getMovie() {
         return movie;
     }
 
-    public int getDays() {
-        return days;
+    public int getDaysRental() {
+        return daysRental;
     }
 }

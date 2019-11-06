@@ -1,19 +1,17 @@
 package de.hegmanns.rental;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Customer {
     private String name;
-    private Map<Movie, Integer> rentals = new LinkedHashMap<>(); // preserves order
+    private List<Rental> rentals = new ArrayList<>(); // preserves order
 
     public Customer(String name) {
         this.name = name;
     };
 
     public void addRental(Rental rental) {
-        rentals.put(rental.getMovie(), rental.getDays());
+        rentals.add(rental);
     }
 
     public String getName() {
@@ -23,37 +21,36 @@ public class Customer {
     public String statement() {
         double totalAmount = 0;
         int frequentRenterPoints = 0;
-        Iterator<Movie> rentals = this.rentals.keySet().iterator();
+        Iterator<Rental> rentalIterator = this.rentals.iterator();
         String result = "Rental Record for " + getName() + "\n";
-        while (rentals.hasNext()) {
+        while (rentalIterator.hasNext()) {
             double thisAmount = 0;
-            Movie each = (Movie) rentals.next();
+            Rental each = rentalIterator.next();
             // determine amounts for each line
-            int dr = this.rentals.get(each);
-            switch (each.getPriceCode()) {
+            int daysRental = each.getDaysRental();
+            switch (each.getMovie().getPriceCode()) {
                 case Movie.REGULAR:
                     thisAmount += 2;
-                    if (dr > 2)
-                        thisAmount += (dr - 2) * 1.5;
+                    if (daysRental > 2)
+                        thisAmount += (daysRental - 2) * 1.5;
                     break;
                 case Movie.NEW_RELEASE:
-                    thisAmount += dr * 3;
+                    thisAmount += daysRental * 3;
                     break;
                 case Movie.CHILDREN:
                     thisAmount += 1.5;
-                    if (dr > 3)
-                        thisAmount += (dr - 3) * 1.5;
+                    if (daysRental > 3)
+                        thisAmount += (daysRental - 3) * 1.5;
                     break;
             }
             // add frequent renter points
             frequentRenterPoints++;
             // add bonus for a two day new release rental
-            if (each.getPriceCode() != null &&
-                    (each.getPriceCode() == Movie.NEW_RELEASE)
-                    && dr > 1)
+            if ((each.getMovie().getPriceCode() == Movie.NEW_RELEASE)
+                    && daysRental > 1)
                 frequentRenterPoints++;
             // show figures line for this rental
-            result += "\t" + each.getTitle() + "\t"
+            result += "\t" + each.getMovie().getTitle() + "\t"
                     + String.valueOf(thisAmount) + "\n";
             totalAmount += thisAmount;
         }
