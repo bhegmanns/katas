@@ -12,9 +12,8 @@ public class Customer {
         this.name = name;
     };
 
-    public void addRental(Movie m, int d) {
-        if (d <= 0) throw new IllegalArgumentException("Negative days rented");
-        rentals.put(m, d);
+    public void addRental(Rental rental) {
+        rentals.put(rental.getMovie(), rental.getDays());
     }
 
     public String getName() {
