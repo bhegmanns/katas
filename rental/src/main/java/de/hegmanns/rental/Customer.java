@@ -22,7 +22,7 @@ public class Customer {
         double totalPrice = 0;
         int loyalityPointsForRental = 0;
         Iterator<Rental> rentalIterator = this.rentals.iterator();
-        String statement = createHeader();
+        String statement = createHeader(getName());
         while (rentalIterator.hasNext()) {
             double priceForCurrentRental = 0;
             Rental each = rentalIterator.next();
@@ -43,17 +43,17 @@ public class Customer {
                         priceForCurrentRental += (daysRental - 3) * 1.5;
                     break;
             }
-            // add frequent renter points
+
             loyalityPointsForRental++;
             // add bonus for a two day new release rental
             if ((each.getMovie().getPriceCode() == Movie.NEW_RELEASE)
                     && daysRental > 1)
                 loyalityPointsForRental++;
-            // show figures line for this rental
+
             statement += createRentalInformation(priceForCurrentRental, each);
             totalPrice += priceForCurrentRental;
         }
-        // add footer lines
+
         statement += createFooter(totalPrice, loyalityPointsForRental);
         return statement;
     }
@@ -70,7 +70,7 @@ public class Customer {
         return footer;
     }
 
-    private String createHeader() {
-        return "Rental Record for " + getName() + "\n";
+    private String createHeader(String name) {
+        return "Rental Record for " + name + "\n";
     }
 }
