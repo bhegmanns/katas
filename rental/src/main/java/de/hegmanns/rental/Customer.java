@@ -19,45 +19,58 @@ public class Customer {
     }
 
     public String statement() {
-        double totalAmount = 0;
-        int frequentRenterPoints = 0;
+        double totalPrice = 0;
+        int loyalityPointsForRental = 0;
         Iterator<Rental> rentalIterator = this.rentals.iterator();
-        String result = "Rental Record for " + getName() + "\n";
+        String statement = createHeader();
         while (rentalIterator.hasNext()) {
-            double thisAmount = 0;
+            double priceForCurrentRental = 0;
             Rental each = rentalIterator.next();
             // determine amounts for each line
             int daysRental = each.getDaysRental();
             switch (each.getMovie().getPriceCode()) {
                 case Movie.REGULAR:
-                    thisAmount += 2;
+                    priceForCurrentRental += 2;
                     if (daysRental > 2)
-                        thisAmount += (daysRental - 2) * 1.5;
+                        priceForCurrentRental += (daysRental - 2) * 1.5;
                     break;
                 case Movie.NEW_RELEASE:
-                    thisAmount += daysRental * 3;
+                    priceForCurrentRental += daysRental * 3;
                     break;
                 case Movie.CHILDREN:
-                    thisAmount += 1.5;
+                    priceForCurrentRental += 1.5;
                     if (daysRental > 3)
-                        thisAmount += (daysRental - 3) * 1.5;
+                        priceForCurrentRental += (daysRental - 3) * 1.5;
                     break;
             }
             // add frequent renter points
-            frequentRenterPoints++;
+            loyalityPointsForRental++;
             // add bonus for a two day new release rental
             if ((each.getMovie().getPriceCode() == Movie.NEW_RELEASE)
                     && daysRental > 1)
-                frequentRenterPoints++;
+                loyalityPointsForRental++;
             // show figures line for this rental
-            result += "\t" + each.getMovie().getTitle() + "\t"
-                    + String.valueOf(thisAmount) + "\n";
-            totalAmount += thisAmount;
+            statement += createRentalInformation(priceForCurrentRental, each);
+            totalPrice += priceForCurrentRental;
         }
         // add footer lines
-        result += "Amount owed is " + String.valueOf(totalAmount) + "\n";
-        result += "You earned " + String.valueOf(frequentRenterPoints)
+        statement += createFooter(totalPrice, loyalityPointsForRental);
+        return statement;
+    }
+
+    private String createRentalInformation(double priceForCurrentRental, Rental each) {
+        return "\t" + each.getMovie().getTitle() + "\t"
+                + String.valueOf(priceForCurrentRental) + "\n";
+    }
+
+    private String createFooter(double totalPrice, int loyalityPointsForRental) {
+        String footer = "Amount owed is " + String.valueOf(totalPrice) + "\n";
+        footer += "You earned " + String.valueOf(loyalityPointsForRental)
                 + " frequent renter points";
-        return result;
+        return footer;
+    }
+
+    private String createHeader() {
+        return "Rental Record for " + getName() + "\n";
     }
 }
